@@ -1,0 +1,39 @@
+cogs:
+  actions:
+    enabled: true
+  calendar:
+    enabled: true
+  config:
+    enabled: false
+  custom:
+    enabled: true
+  help:
+    enabled: true
+  ideas:
+    enabled: true
+  invite:
+    enabled: true
+  lvl:
+    enabled: true
+  musica:
+    enabled: true
+  prefixes:
+    enabled: true
+  random:
+    enabled: true
+  report:
+    enabled: true
+  respuestas:
+    enabled: true
+  roles:
+    enabled: true
+  sync:
+    enabled: true
+  triggered:
+    enabled: false
+  twitch:
+    enabled: true
+  update:
+    enabled: true
+  welcome:
+    enabled: true

@@ -1,0 +1,30 @@
+canales:
+  canalIdeas: 'o'
+  canalReglas: 'o'
+  canalRoles: 'o'
+  canalTwitch: 'o'
+customCommands:
+  test:
+    command: "o"
+guildID: 'o'
+twitch:
+  mainChannel: "o"
+  channels:
+    o:
+      isLive: 0
+  message: "o"
+wcgb:
+  goodbye:
+    goodbyeChannelID: 'o'
+    goodbyeMessage: 'o'
+  wcgbEnable: false
+  welcome:
+    welcomeChannelID: 'o'
+    welcomeMD: "o"
+    welcomeMessage: "o"
+    welcomeRole: "o"
+calendar:
+  dates:
+
+  birthdays:
+  "14/8", "h"

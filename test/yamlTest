@@ -1,0 +1,20 @@
+import yaml
+
+configFile = open("668058103023140872.yml", 'r')
+configData = yaml.safe_load(configFile)
+
+print(configData)
+
+del configData['customCommands']['arriba']
+
+if "arriba" in configData["customCommands"]:
+    print ("españa")
+
+# oldCommands = {'fuck': {'command': 'you'}, 'taza': {'command': 'MMM TAZAS'}, 'comando': {'respuesta': "erfui"}}
+# print (oldCommands)
+# oldCommands["españa"] = {'command': "hsdu"}
+# print (oldCommands)
+# oldCommands["españa"]["command"] = "heyyy"
+# print (oldCommands)
+# if 'españa' in oldCommands:
+#     print ("Hay españa xd")

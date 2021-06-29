@@ -1,0 +1,400 @@
+from discord import message, guild
+import discord
+from discord.ext import commands
+from discord import Guild
+import urllib
+import json
+import asyncio
+import shutil
+import os
+
+
+class config(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command(name='config')
+    async def config(self, ctx):
+        guild_id = str(ctx.guild.id)
+        base_dir = r'C:\Dyson\src\cogs\configs'
+        example = r'example.json'
+        configName = str(guild_id) + '.json'
+        configbakName = str(guild_id) + '.bak.json'
+
+        with open(os.path.join(base_dir, configName), "r") as jsonFile:
+            configData = json.load(jsonFile)
+        isNew = json.loads(configData)['isNew']
+
+        # Reconfiguración
+        if isNew:
+                print("Bot ya configurado")
+                await ctx.channel.send(
+                    'El bot ya se ha configurado, ¿quieres reconfigurarlo? Responde "Si" si quieres o "No" si no quieres.')
+
+                def check(m):
+                    return m.author.id == ctx.author.id
+
+                response = await self.bot.wait_for('message', check=check)
+                while True:
+                        if response == "Si":
+                            bakConfig = open(os.path.join(base_dir, configbakName), "w+")
+                            shutil.copy(os.path.join(base_dir, configName), os.path.join(base_dir, configbakName))
+                            await ctx.channel.send(
+                                "Qué quieres reconfigurar? <:HMMMHappy:710518998827139142> (Escribe el número)")
+                            await asyncio.sleep(0.5)
+                            await ctx.channel.send(
+                                "(1) Canal de bienvenida, (2) Canal de despedida, (3) Opciones de YouTube, (4) Opciones de Twitch, (5) Comandos Habilitados, (6) Salir")
+
+                            def check(m):
+                                return m.author.id == ctx.author.id
+
+                            response = await self.bot.wait_for('message', check=check)
+
+                            while True:
+
+                                if response == "1":
+                                    await ctx.channel.send(
+                                        '¿Que canal quieres poner? Pon "#" y selecciona el canal deseado')
+
+                                    def check(m):
+                                        return m.author.id == ctx.author.id
+
+                                    jastajcanal = await self.bot.wait_for('message', check=check)
+                                    while True:
+                                        if jastajcanal.startswith("<#"):
+                                            change_welcomeChannelID = jastajcanal[2:-1]
+
+                                            configData["welcomeChannelID"] = change_welcomeChannelID
+                                            with open("config/" + str(guild_id) + ".json", "w") as jsonFile:
+                                                json.dump(configData, jsonFile)
+                                            await ctx.channel.send("Hecho!")
+                                            await asyncio.sleep(1)
+                                            # Borrar todos los mensajes xdd
+                                            mgsErase = []
+                                            async for x in ctx.logs_from(ctx.message.channel, limit=100):
+                                                mgsErase.append(x)
+                                            await ctx.delete_messages(mgsErase)
+                                            # Fin de borrar todos los mensajes xdd
+
+                                            break
+                                        await ctx.channel.send('Inserta un canal válido, anda xd')
+
+                                    break
+
+                                if response == "2":
+                                    await ctx.channel.send(
+                                        '¿Que canal quieres poner? Pon "#" y selecciona el canal deseado')
+
+                                    def check(m):
+                                        return m.author.id == ctx.author.id
+
+                                    jastajcanal = await self.bot.wait_for('message', check=check)
+                                    while True:
+                                        if jastajcanal.startswith("<#"):
+                                            change_goodbyeChannelID = jastajcanal[2:-1]
+
+                                            configData["goodbyeChannelID"] = change_goodbyeChannelID
+                                            with open("config/" + str(guild_id) + ".json", "w") as jsonFile:
+                                                json.dump(configData, jsonFile)
+                                            await ctx.channel.send("Hecho!")
+                                            await asyncio.sleep(1)
+                                            # Borrar todos los mensajes xdd
+                                            mgsErase = []
+                                            async for x in ctx.logs_from(ctx.message.channel, limit=100):
+                                                mgsErase.append(x)
+                                            await ctx.delete_messages(mgsErase)
+                                            # Fin de borrar todos los mensajes xdd
+
+                                            break
+                                        await ctx.channel.send('Inserta un canal válido, anda xd')
+
+                                    break
+
+                                if response == "3":
+                                    await ctx.channel.send(
+                                        'Selecciona una opción: (1) Activar función Youtube, (2) Cambiar ID del canal, (3) Salir')
+
+                                    def check(m):
+                                        return m.author.id == ctx.author.id
+
+                                    response = await self.bot.wait_for('message', check=check)
+                                    while True:
+                                        if response == "1":
+                                            await ctx.channel.send('¿Quieres activar o desactivarla? Escribe "1" si quieres activarla, o "0" si quieres desactivarla.')
+                                            def check(m):
+                                                return m.author.id == ctx.author.id
+                                            response = await self.bot.wait_for('message', check=check)
+                                            response = int(response)
+                                            while True:
+                                                if response == (1 or 0):
+                                                    configData["youtube"]["isEnabled"] = response
+                                                    with open("config/" + str(guild_id) + ".json", "w") as jsonFile:
+                                                        json.dump(configData, jsonFile)
+                                                    await ctx.channel.send("Hecho!")
+                                                    await asyncio.sleep(1)
+                                                    # Borrar todos los mensajes xdd
+                                                    mgsErase = []
+                                                    async for x in ctx.logs_from(ctx.message.channel, limit=100):
+                                                        mgsErase.append(x)
+                                                    await ctx.delete_messages(mgsErase)
+                                                    # Fin de borrar todos los mensajes xdd
+
+                                                    break
+                                                await ctx.channel.send('Inserta un valor válido, anda xd')
+
+                                            break
+
+                                        if response == "2":
+                                            await ctx.channel.send('Escríbeme el nuevo ID del canal de Youtube jeje')
+                                            def check(m):
+                                                return m.author.id == ctx.author.id
+                                            change_channelID = await self.bot.wait_for('message', check=check)
+                                            configData["youtube"]["channelID"] = change_channelID
+                                            with open("config/" + str(guild_id) + ".json", "w") as jsonFile:
+                                                json.dump(configData, jsonFile)
+                                            await ctx.channel.send("Hecho!")
+                                            await asyncio.sleep(1)
+                                            # Borrar todos los mensajes xdd
+                                            mgsErase = []
+                                            async for x in ctx.logs_from(ctx.message.channel, limit=100):
+                                                mgsErase.append(x)
+                                            await ctx.delete_messages(mgsErase)
+                                            # Fin de borrar todos los mensajes xdd
+
+                                            break
+
+                                        await ctx.channel.send('Inserta una opcion válida, anda xd')
+
+                                    break
+
+                                if response == "4":
+                                    await ctx.channel.send(
+                                        'Selecciona una opción: (1) Activar función Twitch, (2) Cambiar nombre del canal, (3) Salir')
+
+                                    def check(m):
+                                        return m.author.id == ctx.author.id
+
+                                    response = await self.bot.wait_for('message', check=check)
+                                    while True:
+                                        if response == "1":
+                                            await ctx.channel.send(
+                                                '¿Quieres activar o desactivarla? Escribe "1" si quieres activarla, o "0" si quieres desactivarla.')
+
+                                            def check(m):
+                                                return m.author.id == ctx.author.id
+
+                                            response = await self.bot.wait_for('message', check=check)
+                                            response = int(response)
+                                            while True:
+                                                if response == (1 or 0):
+                                                    configData["twitch"]["isEnabled"] = response
+                                                    with open("config/" + str(guild_id) + ".json", "w") as jsonFile:
+                                                        json.dump(configData, jsonFile)
+                                                    await ctx.channel.send("Hecho!")
+                                                    await asyncio.sleep(1)
+                                                    # Borrar todos los mensajes xdd
+                                                    mgsErase = []
+                                                    async for x in ctx.logs_from(ctx.message.channel, limit=100):
+                                                        mgsErase.append(x)
+                                                    await ctx.delete_messages(mgsErase)
+                                                    # Fin de borrar todos los mensajes xdd
+
+                                                    break
+                                                await ctx.channel.send('Inserta un valor válido, anda xd')
+
+                                            break
+
+                                        if response == "2":
+                                            await ctx.channel.send('Escríbeme el nombre del canal de Twitch jeje')
+
+                                            def check(m):
+                                                return m.author.id == ctx.author.id
+
+                                            change_user = await self.bot.wait_for('message', check=check)
+                                            configData["twitch"]["user"] = change_user
+                                            with open("config/" + str(guild_id) + ".json", "w") as jsonFile:
+                                                json.dump(configData, jsonFile)
+                                            await ctx.channel.send("Hecho!")
+                                            await asyncio.sleep(1)
+                                            # Borrar todos los mensajes xdd
+                                            mgsErase = []
+                                            async for x in ctx.logs_from(ctx.message.channel, limit=100):
+                                                mgsErase.append(x)
+                                            await ctx.delete_messages(mgsErase)
+                                            # Fin de borrar todos los mensajes xdd
+
+                                            break
+
+                                        await ctx.channel.send('Inserta una respuesta válida, anda xd')
+
+                                    break
+
+                                if response == "5":
+                                    await ctx.channel.send("Esta opcion aún no está disponible, te notificaré cuando lo esté jeje")
+
+                                if response == "6":
+                                    break
+
+                        if response == "No":
+                            await ctx.channel.send("Ok! Hoy no toca reconfigurar entonces jeje 😄")
+                            break
+
+                        await ctx.channel.send("¿Puedes elegir una de las dos opciones? No te he entendido bien :c")
+
+
+
+            # Configuración
+        else:
+            with open(os.path.join(base_dir, configName)) as jsonFile:
+                configData = json.load(jsonFile)
+
+                configData["guildID"] = guild_id
+                json.dump(configData, jsonFile)
+
+                configData["serverName"] = guild_id
+                json.dump(configData, jsonFile)
+
+                await ctx.channel.send(
+                    "¡Hola, soy Dyson, un bot todo en uno perfecto para tu servidor de Discord! ¡Gracias por confiar en mí!")
+                await asyncio.sleep(0.5)
+                await ctx.channel.send("¡Vamos a configurar un par de cosillas! 😄")
+                await asyncio.sleep(1)
+                await ctx.channel.send("¿Quieres que haya un mensaje de bienvenida y despedida? Responde 'Si' o 'No'")
+
+                def check(m):
+                    return m.author.id == ctx.author.id
+                response = await self.bot.wait_for('message', check=check)
+                while True:
+                    if response == "Si":
+                        configData["welcomeEnable"] = 1
+                        json.dump(configData, jsonFile)
+
+                        await ctx.channel.send(
+                                '¿Que canal quieres poner para bienvenidas? Pon "#" y selecciona el canal deseado.')
+                        while True:
+                            def check(m):
+                                return m.author.id == ctx.author.id
+
+                            jastajcanal = await self.bot.wait_for('message', check=check)
+                            if jastajcanal.startswith("<#"):
+                                change_welcomeChannelID = jastajcanal[2:-1]
+
+                                configData["welcomeChannelID"] = change_welcomeChannelID
+                                json.dump(configData, jsonFile)
+                                await ctx.channel.send("Hecho!")
+                                await asyncio.sleep(1)
+                                break
+                            await ctx.channel.send('Inserta un canal válido, anda xd')
+
+
+                            await ctx.channel.send(
+                                    '¿Y para las despedidas? Pon "#" y selecciona el canal deseado.')
+                            def check(m):
+                                return m.author.id == ctx.author.id
+
+                            jastajcanal = await self.bot.wait_for('message', check=check)
+                            while True:
+                                if jastajcanal.startswith("<#"):
+                                    change_goodbyeChannelID = jastajcanal[2:-1]
+
+                                    configData["goodbyeChannelID"] = change_goodbyeChannelID
+                                    json.dump(configData, jsonFile)
+                                    await ctx.channel.send("Hecho!")
+                                    await asyncio.sleep(1)
+                                    # Borrar todos los mensajes xdd
+                                    mgsErase = []
+                                    async for x in ctx.logs_from(ctx.message.channel, limit=100):
+                                        mgsErase.append(x)
+                                    await ctx.delete_messages(mgsErase)
+                                    # Fin de borrar todos los mensajes xdd
+                                    break
+                                await ctx.channel.send('Inserta un canal válido, anda xd')
+                                break
+
+                        break
+
+                    else:
+                        break
+
+                await ctx.channel.send("Quieres usar el módulo de Youtube? Responde 'Si' o 'No'")
+
+                def check(m):
+                    return m.author.id == ctx.author.id
+                response = await self.bot.wait_for('message', check=check)
+                if response == "Si":
+                    configData["youtube"]["isEnabled"] = 1
+                    json.dump(configData, jsonFile)
+                    await ctx.channel.send(
+                            '¿Cual es tu id de canal? (Ve a "https://commentpicker.com/youtube-channel-id.php" para encontrarlo')
+                    def check(m):
+                        return m.author.id == ctx.author.id
+                    change_channelID = await self.bot.wait_for('message', check=check)
+                    configData["youtube"]["channelID"] = change_channelID
+                    json.dump(configData, jsonFile)
+                    await ctx.channel.send("Hecho!")
+                    await asyncio.sleep(1)
+                    # Borrar todos los mensajes xdd
+                    mgsErase = []
+                    async for x in ctx.logs_from(ctx.message.channel, limit=100):
+                        mgsErase.append(x)
+                    await ctx.delete_messages(mgsErase)
+                    # Fin de borrar todos los mensajes xdd
+
+
+                await ctx.channel.send("Quieres usar el módulo de Twitch? Responde 'Si' o 'No'")
+
+                def check(m):
+                    return m.author.id == ctx.author.id
+
+                response = await self.bot.wait_for('message', check=check)
+                if response == "Si":
+                    configData["twitch"]["isEnabled"] = 1
+                    json.dump(configData, jsonFile)
+                    await ctx.channel.send('¿Cuál es tu nombre en Twitch?')
+
+                    def check(m):
+                        return m.author.id == ctx.author.id
+
+                    twitchUser = await self.bot.wait_for('message', check=check)
+                    if twitchUser.startswitch("@"):
+                        user = twitchUser[1:0]
+                    else:
+                        user = twitchUser
+                        data = urllib.request.urlopen("https://api.twitch.tv/kraken/users?login="+user).read()
+                        userID = json.loads(data)['users'][0]['_id']
+
+                        configData["twitch"]["userID"] = userID
+                        json.dump(configData, jsonFile)
+
+                        configData["twitch"]["user"] = user
+                        json.dump(configData, jsonFile)
+
+                        await ctx.channel.send("Hecho!")
+                        await asyncio.sleep(1)
+                        # Borrar todos los mensajes xdd
+                        mgsErase = []
+                        async for x in ctx.logs_from(ctx.message.channel, limit=100):
+                            mgsErase.append(x)
+                        await ctx.delete_messages(mgsErase)
+                        # Fin de borrar todos los mensajes xdd
+
+                await ctx.channel.send("¡Felicidades! ¡Dyson ya está configurado en tu servidor! Si tienes un problema con el bot, puedes reportarlo con 'd.report', y si tienes alguna idea o sugerencia, mándamela con 'd.idea',")
+                await ctx.channel.send("Disfruta del bot, Darye")
+                await ctx.channel.send("<:DaryeLogo:674738728488665108>")
+                configData["isNew"] = 0
+                json.dump(configData, jsonFile)
+
+
+
+
+
+
+
+        #todo: crear canal si no existe
+        # else:
+        #     await Guild.create_text_channel(name="config")
+        #     await ctx.channel.send("Porfa, haz el proceso de configuración en el canal #config recién creado.")
+
+
+def setup(bot):
+    bot.add_cog(config(bot))
